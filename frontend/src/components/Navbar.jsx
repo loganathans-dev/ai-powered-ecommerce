@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { ShoppingCart, User, Sun, Moon, Search, Menu, X, LogOut } from 'lucide-react';
@@ -12,9 +12,20 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [allProducts, setAllProducts] = useState([]);
   const navigate = useNavigate();
+  const searchRef = useRef(null);
 
   useEffect(() => {
     api.getProducts().then(setAllProducts).catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setIsSearchOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleLogout = () => {
@@ -61,7 +72,7 @@ const Navbar = () => {
 
             {/* Right Actions */}
             <div className="flex items-center gap-4">
-              <div className="relative flex items-center">
+              <div className="relative flex items-center" ref={searchRef}>
                 <button
                   onClick={() => {
                     setIsSearchOpen(!isSearchOpen);
