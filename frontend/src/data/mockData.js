@@ -1,0 +1,251 @@
+export const mockProducts = [
+  {
+    id: 1,
+    name: "Nike Air Max 270",
+    brand: "Nike",
+    category: "mens",
+    price: 12499,
+    rating: 4.8,
+    reviews: 124,
+    images: [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=800&auto=format&fit=crop"
+    ],
+    sizes: [7, 8, 9, 10, 11, 12],
+    colors: ["#ef4444", "#000000", "#ffffff"],
+    description: "The Nike Air Max 270 delivers visible cushioning under every step. Updated for modern comfort, it nods to the original 1991 Air Max 180 with its exaggerated tongue top and heritage tongue logo.",
+    featured: true,
+    offer: 10
+  },
+  {
+    id: 2,
+    name: "Adidas Ultraboost Light",
+    brand: "Adidas",
+    category: "womens",
+    price: 15999,
+    rating: 4.9,
+    reviews: 312,
+    images: [
+      "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop"
+    ],
+    sizes: [5, 6, 7, 8, 9],
+    colors: ["#ec4899", "#f3f4f6"],
+    description: "Experience epic energy with the new Ultraboost Light, our lightest Ultraboost ever. The magic lies in the Light BOOST midsole, a new generation of adidas BOOST.",
+    featured: true,
+    offer: 0
+  },
+  {
+    id: 3,
+    name: "Puma RS-X Toys",
+    brand: "Puma",
+    category: "kids",
+    price: 7499,
+    rating: 4.5,
+    reviews: 89,
+    images: [
+      "https://images.unsplash.com/photo-1514989940723-e8e51635b782?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=800&auto=format&fit=crop"
+    ],
+    sizes: [1, 2, 3, 4, 5],
+    colors: ["#3b82f6", "#eab308", "#ef4444"],
+    description: "Based on PUMA's innovative Running System technology, the RS-X line draws its design inspiration from the decade that had the best toys ever, hands down, bar none: the 1980s.",
+    featured: true,
+    offer: 15
+  },
+  {
+    id: 4,
+    name: "Reebok Classic Leather",
+    brand: "Reebok",
+    category: "mens",
+    price: 6999,
+    rating: 4.6,
+    reviews: 420,
+    images: [
+      "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=800&auto=format&fit=crop"
+    ],
+    sizes: [8, 9, 10, 11],
+    colors: ["#ffffff", "#000000"],
+    description: "Always in style. These men's Classic Leather shoes stay true to their roots. A soft leather upper gives them a comfortable feel.",
+    featured: false,
+    offer: 0
+  },
+  {
+    id: 5,
+    name: "Nike Dunk Low Retro",
+    brand: "Nike",
+    category: "mens",
+    price: 8999,
+    rating: 4.7,
+    reviews: 512,
+    images: [
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=800&auto=format&fit=crop"
+    ],
+    sizes: [7, 8, 9, 10, 11, 12],
+    colors: ["#000000", "#ffffff"],
+    description: "Created for the hardwood but taken to the streets, the '80s b-ball icon returns with perfectly shined overlays and classic team colors.",
+    featured: false,
+    offer: 0
+  },
+  {
+    id: 6,
+    name: "Adidas NMD_R1",
+    brand: "Adidas",
+    category: "womens",
+    price: 12499,
+    rating: 4.8,
+    reviews: 215,
+    images: [
+      "https://images.unsplash.com/photo-1588099768523-f4e6a5679d88?q=80&w=800&auto=format&fit=crop"
+    ],
+    sizes: [6, 7, 8, 9],
+    colors: ["#000000", "#f43f5e"],
+    description: "Pack your bag, lace up and get going. City adventures beckon in these NMD_R1 shoes. An update to an acclaimed '80s runner from the adidas archive.",
+    featured: false,
+    offer: 20
+  },
+  {
+    id: 7,
+    name: "Nike Air Force 1 '07",
+    brand: "Nike",
+    category: "womens",
+    price: 9599,
+    rating: 4.9,
+    reviews: 890,
+    images: [
+      "https://images.unsplash.com/photo-1595341888016-a392ef81b7de?q=80&w=800&auto=format&fit=crop"
+    ],
+    sizes: [5, 6, 7, 8, 9, 10],
+    colors: ["#ffffff"],
+    description: "The radiance lives on in the Nike Air Force 1 '07, the b-ball icon that puts a fresh spin on what you know best: crisp leather, bold colors and the perfect amount of flash.",
+    featured: true,
+    offer: 0
+  },
+  {
+    id: 8,
+    name: "New Balance 574 Core",
+    brand: "New Balance",
+    category: "kids",
+    price: 5499,
+    rating: 4.5,
+    reviews: 145,
+    images: [
+      "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?q=80&w=800&auto=format&fit=crop"
+    ],
+    sizes: [1, 2, 3, 4],
+    colors: ["#9ca3af", "#1e3a8a"],
+    description: "The 574 is synonymous with the boundary defying New Balance heritage. Worn by anyone, loved by everyone.",
+    featured: false,
+    offer: 0
+  }
+];
+
+export const mockOrders = [
+  {
+    id: "ORD-12345",
+    date: "2026-05-10",
+    status: "Delivered",
+    total: 12499,
+    customer: "John Doe",
+    customerEmail: "john.doe@example.com",
+    address: "123 Main St, Mumbai, Maharashtra 400001",
+    paymentStatus: "Paid",
+    items: [
+      { productId: 1, name: "Nike Air Max 270", quantity: 1, price: 12499 }
+    ]
+  },
+  {
+    id: "ORD-12346",
+    date: "2026-05-12",
+    status: "Processing",
+    total: 25598,
+    customer: "Jane Smith",
+    customerEmail: "jane.smith@example.com",
+    address: "456 Brigade Rd, Bangalore, KA",
+    paymentStatus: "Paid",
+    items: [
+      { productId: 2, name: "Adidas Ultraboost Light", quantity: 1, price: 15999 },
+      { productId: 7, name: "Nike Air Force 1 '07", quantity: 1, price: 9599 }
+    ]
+  },
+  {
+    id: "ORD-12347",
+    date: "2026-05-13",
+    status: "Pending",
+    total: 8999,
+    customer: "Alice Johnson",
+    customerEmail: "alice.j@example.com",
+    address: "789 Ring Road, Delhi, DL",
+    paymentStatus: "Unpaid",
+    items: [
+      { productId: 5, name: "Nike Dunk Low Retro", quantity: 1, price: 8999 }
+    ]
+  }
+];
+
+export const mockCustomers = [
+  {
+    id: "CUST-001",
+    name: "John Doe",
+    email: "john.doe@example.com",
+    phone: "+91 98765 43210",
+    password: "password",
+    orders: 3,
+    totalSpent: 35000,
+    status: "Active",
+    joinDate: "2025-10-12",
+    addresses: [
+      {
+        id: 1,
+        type: "Home",
+        street: "123 Main St",
+        city: "Mumbai",
+        state: "Maharashtra",
+        zip: "400001",
+        isDefault: true
+      }
+    ]
+  },
+  {
+    id: "CUST-002",
+    name: "Jane Smith",
+    email: "jane.smith@example.com",
+    phone: "+91 87654 32109",
+    password: "password",
+    orders: 5,
+    totalSpent: 62500,
+    status: "Active",
+    joinDate: "2025-08-24",
+    addresses: []
+  },
+  {
+    id: "CUST-003",
+    name: "Alice Johnson",
+    email: "alice.j@example.com",
+    phone: "+91 76543 21098",
+    password: "password",
+    orders: 1,
+    totalSpent: 8999,
+    status: "Active",
+    joinDate: "2026-01-05",
+    addresses: []
+  }
+];
+
+export const mockUser = {
+  name: "John Doe",
+  email: "john.doe@example.com",
+  phone: "+91 98765 43210",
+  addresses: [
+    {
+      id: 1,
+      type: "Home",
+      street: "123 Main St",
+      city: "Mumbai",
+      state: "Maharashtra",
+      zip: "400001",
+      isDefault: true
+    }
+  ]
+};
