@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom'
 import './index.css'
 import Layout from './components/Layout'
 import Login from './Login'
@@ -19,9 +20,20 @@ import ManageProducts from './admin/ManageProducts'
 import AdminOrders from './admin/AdminOrders'
 import AdminLogin from './admin/AdminLogin'
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  
+  return null;
+}
+
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/login" element={<Login />} />
