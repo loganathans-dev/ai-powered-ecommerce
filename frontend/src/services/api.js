@@ -1,7 +1,7 @@
 import { mockProducts, mockOrders, mockCustomers, mockUser } from '../data/mockData';
 
 // Simulate network delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms) => Promise.resolve();
 
 export const api = {
   health: async () => {

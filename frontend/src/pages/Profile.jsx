@@ -4,13 +4,14 @@ import { useAppContext } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
 import { api } from '../services/api';
 import { Link } from 'react-router-dom';
+import { mockUser } from '../data/mockData';
 
 const Profile = () => {
   const { user, updateUser } = useAppContext();
   const [userOrders, setUserOrders] = useState([]);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [profileForm, setProfileForm] = useState({ name: user?.name || '', email: user?.email || '', phone: user?.phone || '' });
-  const [addresses, setAddresses] = useState(user?.addresses || []);
+  const [profileForm, setProfileForm] = useState({ name: user?.name || mockUser.name, email: user?.email || mockUser.email, phone: user?.phone || mockUser.phone });
+  const [addresses, setAddresses] = useState(user?.addresses?.length > 0 ? user.addresses : mockUser.addresses || []);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newAddress, setNewAddress] = useState({ type: '', street: '', city: '', state: '', zip: '' });
   const [editingAddressId, setEditingAddressId] = useState(null);
@@ -36,8 +37,8 @@ const Profile = () => {
             <div className="w-24 h-24 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-4 border-4 border-white dark:border-slate-800 shadow-lg">
               <User size={40} />
             </div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white text-center">{user?.name || 'Guest User'}</h2>
-            <p className="text-slate-500 dark:text-slate-400 text-sm">{user?.email || 'Sign in to access profile'}</p>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white text-center">{user?.name || mockUser.name}</h2>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">{user?.email || mockUser.email}</p>
           </div>
 
           <nav className="flex flex-col gap-2">
@@ -57,7 +58,7 @@ const Profile = () => {
               {!isEditingProfile ? (
                 <button 
                   onClick={() => {
-                    setProfileForm({ name: user?.name || '', email: user?.email || '', phone: user?.phone || '' });
+                    setProfileForm({ name: user?.name || mockUser.name, email: user?.email || mockUser.email, phone: user?.phone || mockUser.phone });
                     setIsEditingProfile(true);
                   }}
                   className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-medium"
@@ -91,7 +92,7 @@ const Profile = () => {
                 {isEditingProfile ? (
                   <input type="text" value={profileForm.name} onChange={e => setProfileForm({...profileForm, name: e.target.value})} className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white w-full focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 ) : (
-                  <p className="font-medium text-slate-900 dark:text-white text-lg">{user?.name || 'Not Provided'}</p>
+                  <p className="font-medium text-slate-900 dark:text-white text-lg">{user?.name || mockUser.name}</p>
                 )}
               </div>
               <div>
@@ -99,7 +100,7 @@ const Profile = () => {
                 {isEditingProfile ? (
                   <input type="email" value={profileForm.email} onChange={e => setProfileForm({...profileForm, email: e.target.value})} className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white w-full focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 ) : (
-                  <p className="font-medium text-slate-900 dark:text-white text-lg">{user?.email || 'Not Provided'}</p>
+                  <p className="font-medium text-slate-900 dark:text-white text-lg">{user?.email || mockUser.email}</p>
                 )}
               </div>
               <div>
@@ -107,7 +108,7 @@ const Profile = () => {
                 {isEditingProfile ? (
                   <input type="tel" value={profileForm.phone} onChange={e => setProfileForm({...profileForm, phone: e.target.value})} className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white w-full focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 ) : (
-                  <p className="font-medium text-slate-900 dark:text-white text-lg">{user?.phone || 'Not Provided'}</p>
+                  <p className="font-medium text-slate-900 dark:text-white text-lg">{user?.phone || mockUser.phone}</p>
                 )}
               </div>
             </div>

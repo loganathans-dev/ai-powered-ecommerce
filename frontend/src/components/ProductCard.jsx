@@ -4,7 +4,7 @@ import { ShoppingCart, Star } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { Link } from 'react-router-dom';
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, index = 0 }) => {
   const { addToCart } = useAppContext();
 
   return (
@@ -12,6 +12,7 @@ const ProductCard = ({ product }) => {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
+      transition={{ delay: index * 0.1, duration: 0.4 }}
       whileHover={{ y: -5 }}
       className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden group flex flex-col h-full"
     >
