@@ -101,17 +101,17 @@ const Home = () => {
             <CategoryCard
               title="Men's"
               path="/mens"
-              imgUrl="https://images.unsplash.com/photo-1617153036647-759ddf3b9260?q=80&w=800&auto=format&fit=crop"
+              imgUrl="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop"
             />
             <CategoryCard
               title="Women's"
               path="/womens"
-              imgUrl="https://images.unsplash.com/photo-1608228079968-c7681eaef81e?q=80&w=800&auto=format&fit=crop"
+              imgUrl="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop"
             />
             <CategoryCard
               title="Kids"
               path="/kids"
-              imgUrl="https://images.unsplash.com/photo-1596464716127-f2a829840c88?q=80&w=800&auto=format&fit=crop"
+              imgUrl="https://images.unsplash.com/photo-1514989940723-e8e51635b782?q=80&w=800&auto=format&fit=crop"
             />
           </div>
         </div>
@@ -135,7 +135,7 @@ const FeatureItem = ({ icon: Icon, title, desc, className = "" }) => (
 const CategoryCard = ({ title, path, imgUrl }) => (
   <motion.div
     whileHover={{ y: -10 }}
-    className="group relative h-96 rounded-3xl overflow-hidden shadow-lg"
+    className="group relative h-96 rounded-3xl overflow-hidden shadow-lg bg-slate-800"
   >
     <Link to={path} className="block w-full h-full">
       <img src={imgUrl} alt={title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
