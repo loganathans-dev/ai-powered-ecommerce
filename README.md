@@ -23,3 +23,36 @@ AI-powered MERN eCommerce application for online shoe shopping with authenticati
 ```bash
 npm install
 npm start
+
+
+---
+
+# ✅ 2. Add screenshots later
+Very important.
+
+Add:
+- homepage
+- product page
+- cart
+- admin panel
+
+---
+
+# ✅ 3. Pin repository on GitHub
+
+Go to your profile:
+👉 Customize your pins
+
+Pin:
+- ai-powered-ecommerce
+- best projects
+
+---
+
+# 🚀 Your GitHub profile now becomes:
+✔ professional  
+✔ recruiter-friendly  
+✔ modern AI + MERN branding  
+✔ portfolio-ready  
+
+Good progress.
