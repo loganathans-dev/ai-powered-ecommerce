@@ -19,6 +19,7 @@ import AdminDashboard from './admin/AdminDashboard'
 import ManageProducts from './admin/ManageProducts'
 import AdminOrders from './admin/AdminOrders'
 import AdminLogin from './admin/AdminLogin'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -35,14 +36,15 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/admin-login" element={<AdminLogin />} />
 
         {/* Customer Routes with Layout */}
         <Route element={<Layout />}>
-          <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Navigate to="/" replace />} />
+          <Route path="/products" element={<ProductList title="All Products" />} />
           <Route path="/mens" element={<ProductList category="mens" title="Men's Collection" />} />
           <Route path="/womens" element={<ProductList category="womens" title="Women's Collection" />} />
           <Route path="/kids" element={<ProductList category="kids" title="Kids Collection" />} />
@@ -50,10 +52,10 @@ function App() {
           <Route path="/product/:id" element={<ProductDetails />} />
 
           <Route path="/cart" element={<Cart />} />
-          <Route path="/address" element={<Address />} />
-          <Route path="/payment" element={<Payment />} />
+          <Route path="/checkout" element={<ProtectedRoute><Address /></ProtectedRoute>} />
+          <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
           <Route path="/orders" element={<MyOrder />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/terms" element={<Terms />} />
         </Route>
 

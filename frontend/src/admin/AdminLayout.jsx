@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { LayoutDashboard, Package, ShoppingBag, LogOut, Settings } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
@@ -8,8 +8,9 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const { isAdmin, logout } = useAppContext();
 
-  // In a real app, this should protect the route.
-  // For demo, we just show it.
+  if (!isAdmin) {
+    return <Navigate to="/admin-login" replace />;
+  }
 
   const handleLogout = () => {
     logout();
@@ -27,7 +28,7 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside className="w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col fixed h-full z-10">
         <div className="p-6">
-          <Link to="/home" className="flex items-center gap-2 mb-2">
+          <Link to="/" className="flex items-center gap-2 mb-2">
             <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               Shoeshop Admin
             </span>

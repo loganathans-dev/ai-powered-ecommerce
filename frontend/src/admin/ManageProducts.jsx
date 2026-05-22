@@ -18,7 +18,7 @@ const ManageProducts = () => {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [formData, setFormData] = useState({ name: '', brand: '', category: 'mens', price: '', imageUrl: '', imageFile: null, sizes: [] });
+  const [formData, setFormData] = useState({ name: '', brand: '', category: 'mens', price: '', stock: '', imageUrl: '', imageFile: null, sizes: [] });
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [isAddingNewBrand, setIsAddingNewBrand] = useState(false);
   const [customBrands, setCustomBrands] = useState([]);
@@ -57,13 +57,14 @@ const ManageProducts = () => {
         brand: product.brand,
         category: product.category,
         price: product.price,
+        stock: product.stock || 0,
         imageUrl: product.images[0],
         imageFile: null,
         sizes: product.sizes || []
       });
     } else {
       setEditingProduct(null);
-      setFormData({ name: '', brand: '', category: 'mens', price: '', imageUrl: '', imageFile: null, sizes: [] });
+      setFormData({ name: '', brand: '', category: 'mens', price: '', stock: '', imageUrl: '', imageFile: null, sizes: [] });
     }
     setIsModalOpen(true);
   };
@@ -77,6 +78,7 @@ const ManageProducts = () => {
       brand: formData.brand,
       category: formData.category,
       price: Number(formData.price),
+      stock: Number(formData.stock),
       sizes: formData.sizes.length > 0 ? formData.sizes : [8, 9, 10],
       images: [finalImageUrl || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800'],
       colors: ['#000000', '#ffffff'],
@@ -143,6 +145,7 @@ const ManageProducts = () => {
                 <th className="px-6 py-4 font-medium">Product</th>
                 <th className="px-6 py-4 font-medium">Category</th>
                 <th className="px-6 py-4 font-medium">Price</th>
+                <th className="px-6 py-4 font-medium">Stock</th>
                 <th className="px-6 py-4 font-medium text-right">Actions</th>
               </tr>
             </thead>
@@ -162,6 +165,7 @@ const ManageProducts = () => {
                   </td>
                   <td className="px-6 py-4 text-slate-600 dark:text-slate-300 capitalize">{product.category}</td>
                   <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">₹{product.price}</td>
+                  <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{product.stock || 0}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button 
@@ -274,13 +278,19 @@ const ManageProducts = () => {
                   <input required type="number" min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-slate-900 dark:text-white" />
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Category</label>
-                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-slate-900 dark:text-white">
-                  <option value="mens">Men's</option>
-                  <option value="womens">Women's</option>
-                  <option value="kids">Kids</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Category</label>
+                  <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-slate-900 dark:text-white">
+                    <option value="mens">Men's</option>
+                    <option value="womens">Women's</option>
+                    <option value="kids">Kids</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Stock Quantity</label>
+                  <input required type="number" min="0" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-slate-900 dark:text-white" />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Upload Image</label>

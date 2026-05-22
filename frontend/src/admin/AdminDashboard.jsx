@@ -1,34 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { IndianRupee, ShoppingBag, Users, TrendingUp, ChevronDown } from 'lucide-react';
+import { IndianRupee, ShoppingBag, Users, ChevronDown, Package, AlertTriangle } from 'lucide-react';
+import { mockOrders, mockCustomers } from '../data/mockData';
 import { api } from '../services/api';
 
 const AdminDashboard = () => {
   const [timeFilter, setTimeFilter] = useState('30days');
   const [recentOrders, setRecentOrders] = useState([]);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    api.getOrders()
-      .then((orders) => setRecentOrders(orders.slice(0, 5)))
-      .catch(console.error);
+    // Use mock data instead of API call to show all orders
+    setRecentOrders(mockOrders);
+    api.getProducts().then(setProducts).catch(console.error);
   }, []);
 
-  // Simulate dynamic stats based on time filter
+  // Use mock data for stats
   const getStats = (filter) => {
-    let m = 1;
-    if (filter === '7days') m = 0.25;
-    if (filter === '1year') m = 12;
-    if (filter === 'all') m = 24;
-
+    const totalRevenue = mockOrders.reduce((sum, order) => sum + order.total, 0);
+    
     return {
-      revenue: '₹' + Math.floor(45231 * m).toLocaleString('en-IN'),
-      orders: Math.floor(356 * m).toLocaleString('en-IN'),
-      customers: Math.floor(2431 * m).toLocaleString('en-IN'),
-      conversion: (3.2 + (Math.random() * 0.5 * (m > 1 ? 1 : -1))).toFixed(1) + '%'
+      revenue: '₹' + totalRevenue.toLocaleString('en-IN'),
+      orders: mockOrders.length.toString(),
+      customers: mockCustomers.length.toString(),
+      totalProducts: products.length.toString()
     };
   };
 
   const stats = getStats(timeFilter);
+  // Filter products with stock <= 10 (or assume 0/missing for mock data)
+  // Since mock data doesn't have stock initially, we will pretend some are low stock.
+  // In reality, we'll sort by stock.
+  const lowStockProducts = products.filter(p => (p.stock || 0) < 5).slice(0, 3);
 
   return (
     <div>
@@ -54,8 +57,8 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard title="Total Revenue" value={stats.revenue} icon={IndianRupee} trend="+12.5%" />
         <StatCard title="Orders" value={stats.orders} icon={ShoppingBag} trend="+8.2%" />
+        <StatCard title="Total Products" value={stats.totalProducts} icon={Package} trend="+5.0%" />
         <StatCard title="Customers" value={stats.customers} icon={Users} trend="+15.3%" />
-        <StatCard title="Conversion Rate" value={stats.conversion} icon={TrendingUp} trend="+1.1%" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -98,30 +101,64 @@ const AdminDashboard = () => {
         </div>
 
         {/* Top Products Summary */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-6">Top Products</h2>
-          <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700">
-              <div>
-                <p className="font-bold text-slate-900 dark:text-white">Nike Air Max 270</p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">124 sales</p>
+        <div className="flex flex-col gap-6">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-6">Top Products</h2>
+            <div className="flex flex-col gap-4">
+              <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700">
+                <div>
+                  <p className="font-bold text-slate-900 dark:text-white">Nike Air Max 270</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">124 sales</p>
+                </div>
+                <span className="font-bold text-indigo-600 dark:text-indigo-400">₹18,600</span>
               </div>
-              <span className="font-bold text-indigo-600 dark:text-indigo-400">₹18,600</span>
-            </div>
-            <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700">
-              <div>
-                <p className="font-bold text-slate-900 dark:text-white">Adidas Ultraboost</p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">89 sales</p>
+              <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700">
+                <div>
+                  <p className="font-bold text-slate-900 dark:text-white">Adidas Ultraboost</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">89 sales</p>
+                </div>
+                <span className="font-bold text-indigo-600 dark:text-indigo-400">₹16,910</span>
               </div>
-              <span className="font-bold text-indigo-600 dark:text-indigo-400">₹16,910</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="font-bold text-slate-900 dark:text-white">Nike Air Force 1</p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">76 sales</p>
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="font-bold text-slate-900 dark:text-white">Nike Air Force 1</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">76 sales</p>
+                </div>
+                <span className="font-bold text-indigo-600 dark:text-indigo-400">₹8,740</span>
               </div>
-              <span className="font-bold text-indigo-600 dark:text-indigo-400">₹8,740</span>
             </div>
+          </div>
+          
+          {/* Low Stock Alerts */}
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <AlertTriangle className="text-amber-500" size={20} /> Low Stock
+              </h2>
+              <Link to="/admin/products" className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline">Manage</Link>
+            </div>
+            {lowStockProducts.length > 0 ? (
+              <div className="flex flex-col gap-4">
+                {lowStockProducts.map(p => (
+                  <div key={p.id} className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700 last:border-0 last:pb-0">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded overflow-hidden bg-slate-100">
+                        <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm text-slate-900 dark:text-white line-clamp-1">{p.name}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{p.brand}</p>
+                      </div>
+                    </div>
+                    <span className="px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded text-xs font-bold whitespace-nowrap">
+                      {p.stock || 0} left
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-slate-500 dark:text-slate-400">All products are well stocked.</p>
+            )}
           </div>
         </div>
       </div>

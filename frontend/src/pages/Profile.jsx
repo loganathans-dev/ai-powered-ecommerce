@@ -3,11 +3,13 @@ import { User, Heart, Settings, Edit2, Package, Clock, CheckCircle, Plus, Trash2
 import { useAppContext } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
 import { api } from '../services/api';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { mockUser } from '../data/mockData';
 
 const Profile = () => {
-  const { user, updateUser } = useAppContext();
+  const { user, updateUser, logout } = useAppContext();
+  const navigate = useNavigate();
   const [userOrders, setUserOrders] = useState([]);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState({ name: user?.name || mockUser.name, email: user?.email || mockUser.email, phone: user?.phone || mockUser.phone });
@@ -19,6 +21,36 @@ const Profile = () => {
     const params = new URLSearchParams(window.location.search);
     return params.get('tab') || 'profile';
   });
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deletingAccount, setDeletingAccount] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    if (!user?.email) {
+      toast.error('You must be logged in to delete your account');
+      return;
+    }
+    if (!deletePassword) {
+      toast.error('Enter your password to confirm deletion');
+      return;
+    }
+
+    setDeletingAccount(true);
+    try {
+      await api.deleteAccount(user.email, deletePassword);
+      toast.success('Your account has been deleted');
+      logout();
+      navigate('/');
+    } catch (err) {
+      toast.error(err.message || 'Failed to delete account');
+    } finally {
+      setDeletingAccount(false);
+    }
+  };
 
   useEffect(() => {
     if (user?.email) {
@@ -259,14 +291,140 @@ const Profile = () => {
         {activeTab === 'settings' && (
           <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 shadow-sm animate-in fade-in">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-8">Account Settings</h2>
-            <div className="space-y-6 max-w-md">
-              <button className="w-full text-left px-4 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors font-medium text-slate-700 dark:text-slate-300">
-                Change Password
-              </button>
-              <button className="w-full text-left px-4 py-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 transition-colors font-medium">
-                Delete Account
-              </button>
-            </div>
+            
+            {!isChangingPassword ? (
+              <div className="space-y-6 max-w-md">
+                <button 
+                  onClick={() => setIsChangingPassword(true)}
+                  className="w-full text-left px-4 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors font-medium text-slate-700 dark:text-slate-300"
+                >
+                  Change Password
+                </button>
+                {!showDeleteConfirm ? (
+                  <button 
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="w-full text-left px-4 py-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 transition-colors font-medium"
+                  >
+                    Delete Account
+                  </button>
+                ) : (
+                  <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-xl border border-red-200 dark:border-red-800">
+                    <h3 className="font-bold mb-2 text-red-700 dark:text-red-400">Are you absolutely sure?</h3>
+                    <p className="text-sm text-red-600 dark:text-red-300 mb-4">
+                      This action cannot be undone. Your account will be permanently removed from the database.
+                    </p>
+                    <div className="mb-4">
+                      <label className="block text-sm text-red-700 dark:text-red-300 mb-1">
+                        Enter your password to confirm
+                      </label>
+                      <input
+                        type="password"
+                        value={deletePassword}
+                        onChange={(e) => setDeletePassword(e.target.value)}
+                        placeholder="Your password"
+                        className="w-full px-4 py-2 rounded-lg border border-red-200 dark:border-red-800 dark:bg-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                      />
+                    </div>
+                    <div className="flex gap-4">
+                      <button
+                        type="button"
+                        onClick={handleDeleteAccount}
+                        disabled={deletingAccount}
+                        className="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition-colors flex-1 disabled:opacity-60"
+                      >
+                        {deletingAccount ? 'Deleting...' : 'Yes, delete my account'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowDeleteConfirm(false);
+                          setDeletePassword('');
+                        }}
+                        disabled={deletingAccount}
+                        className="bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 px-4 py-2 rounded-lg font-medium hover:bg-red-200 dark:hover:bg-red-900/60 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="max-w-md bg-slate-50 dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+                <h3 className="font-bold mb-4 text-slate-900 dark:text-white">Change Password</h3>
+                {passwordError && <div className="mb-4 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">{passwordError}</div>}
+                {passwordSuccess && <div className="mb-4 text-sm text-green-600 bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">{passwordSuccess}</div>}
+                <div className="space-y-4 mb-6">
+                  <div>
+                    <label className="block text-sm text-slate-500 dark:text-slate-400 mb-1">Current Password</label>
+                    <input 
+                      type="password" 
+                      value={passwordForm.currentPassword} 
+                      onChange={e => setPasswordForm({...passwordForm, currentPassword: e.target.value})} 
+                      className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white w-full focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-500 dark:text-slate-400 mb-1">New Password</label>
+                    <input 
+                      type="password" 
+                      value={passwordForm.newPassword} 
+                      onChange={e => setPasswordForm({...passwordForm, newPassword: e.target.value})} 
+                      className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white w-full focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-500 dark:text-slate-400 mb-1">Confirm New Password</label>
+                    <input 
+                      type="password" 
+                      value={passwordForm.confirmPassword} 
+                      onChange={e => setPasswordForm({...passwordForm, confirmPassword: e.target.value})} 
+                      className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white w-full focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <button 
+                    onClick={() => {
+                      if (!passwordForm.currentPassword) {
+                        setPasswordError('Please enter your current password');
+                        return;
+                      }
+                      if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+                        setPasswordError('New passwords do not match');
+                        return;
+                      }
+                      if (passwordForm.newPassword.length < 6) {
+                        setPasswordError('Password must be at least 6 characters');
+                        return;
+                      }
+                      setPasswordError('');
+                      // Mock successful change
+                      setPasswordSuccess('Password successfully updated!');
+                      setTimeout(() => {
+                        setIsChangingPassword(false);
+                        setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                        setPasswordSuccess('');
+                      }, 2000);
+                    }}
+                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors flex-1"
+                  >
+                    Update Password
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setIsChangingPassword(false);
+                      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                      setPasswordError('');
+                      setPasswordSuccess('');
+                    }}
+                    className="bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 px-4 py-2 rounded-lg font-medium hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

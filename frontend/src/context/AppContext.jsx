@@ -37,6 +37,23 @@ export const AppProvider = ({ children }) => {
     localStorage.setItem('wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
 
+  // Sync logged-in user from MongoDB on app load
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem('user') || 'null');
+    if (!stored?.email) return;
+
+    api
+      .getMe(stored.email)
+      .then((userFromDb) => {
+        setUser(userFromDb);
+        localStorage.setItem('user', JSON.stringify(userFromDb));
+      })
+      .catch(() => {
+        localStorage.removeItem('user');
+        setUser(null);
+      });
+  }, []);
+
   const toggleTheme = () => {
     setTheme(prevTheme => {
       const newTheme = prevTheme === 'light' ? 'dark' : 'light';

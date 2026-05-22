@@ -1,94 +1,117 @@
-import { mockProducts, mockOrders, mockCustomers, mockUser } from '../data/mockData';
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
-// Simulate network delay
-const delay = (ms) => Promise.resolve();
+const request = async (path, options = {}) => {
+  const res = await fetch(`${API_BASE}${path}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+    ...options,
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data.message || 'Request failed');
+  }
+
+  return data;
+};
+
+const buildQuery = (params = {}) => {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      query.set(key, String(value));
+    }
+  });
+  const qs = query.toString();
+  return qs ? `?${qs}` : '';
+};
 
 export const api = {
-  health: async () => {
-    await delay(200);
-    return { status: 'ok' };
-  },
+  health: () => request('/health'),
 
-  getProducts: async (params = {}) => {
-    await delay(500);
-    let products = [...mockProducts];
+  getProducts: (params = {}) => request(`/products${buildQuery(params)}`),
 
-    if (params.category) {
-      products = products.filter(p => p.category === params.category);
-    }
-    if (params.featured === 'true' || params.featured === true) {
-      products = products.filter(p => p.featured === true);
-    }
+  getProduct: (id) => request(`/products/${id}`),
 
-    return products;
-  },
+  createProduct: (data) =>
+    request('/products', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 
-  getProduct: async (id) => {
-    await delay(300);
-    const product = mockProducts.find(p => p.id === parseInt(id));
-    if (!product) throw new Error('Product not found');
-    return product;
-  },
+  updateProduct: (id, data) =>
+    request(`/products/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
 
-  createProduct: async (data) => {
-    await delay(300);
-    return { ...data, id: Date.now() };
-  },
+  deleteProduct: (id) =>
+    request(`/products/${id}`, {
+      method: 'DELETE',
+    }),
 
-  updateProduct: async (id, data) => {
-    await delay(300);
-    return { id, ...data };
-  },
+  getOrders: () => request('/orders'),
 
-  deleteProduct: async (id) => {
-    await delay(300);
-    return { success: true };
-  },
+  getUserOrders: (email) => request(`/orders/user/${encodeURIComponent(email)}`),
 
-  getOrders: async () => {
-    await delay(500);
-    return mockOrders;
-  },
+  createOrder: (data) =>
+    request('/orders', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 
-  getUserOrders: async (email) => {
-    await delay(300);
-    return mockOrders; // Simplified for mock
-  },
+  updateOrderStatus: (id, status) =>
+    request(`/orders/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    }),
 
-  createOrder: async (data) => {
-    await delay(500);
-    return { ...data, id: "ORD-" + Math.floor(Math.random() * 100000) };
-  },
+  login: (email, password) =>
+    request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    }),
 
-  updateOrderStatus: async (id, status) => {
-    await delay(300);
-    return { id, status };
-  },
+  signup: (data) =>
+    request('/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 
-  login: async (email, password) => {
-    await delay(500);
-    if (email === mockUser.email || (email && password)) { // simple mock accepts any if not mockUser
-      return { user: mockUser, token: "mock-jwt-token" };
-    }
-    throw new Error("Invalid credentials");
-  },
+  getMe: (email) => request(`/auth/me${buildQuery({ email })}`),
 
-  signup: async (data) => {
-    await delay(500);
-    return { user: { ...data, addresses: [] }, token: "mock-jwt-token" };
-  },
+  adminLogin: (username, password) =>
+    request('/auth/admin-login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    }),
 
-  adminLogin: async (username, password) => {
-    await delay(500);
-    if (username === 'admin' && password === 'admin') {
-      return { user: { name: 'Admin', role: 'admin' }, token: "admin-token" };
-    }
-    // Allow any for testing if needed, or enforce 'admin'
-    return { user: { name: 'Admin', role: 'admin' }, token: "admin-token" };
-  },
+  updateProfile: (data) =>
+    request('/auth/profile', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
 
-  updateProfile: async (data) => {
-    await delay(300);
-    return data;
-  },
+  deleteAccount: (email, password) =>
+    request('/auth/account', {
+      method: 'DELETE',
+      body: JSON.stringify({ email, password }),
+    }),
+
+  getRazorpayKey: () => request('/payments/key'),
+
+  createRazorpayOrder: (amount) =>
+    request('/payments/create-order', {
+      method: 'POST',
+      body: JSON.stringify({ amount }),
+    }),
+
+  verifyPayment: (data) =>
+    request('/payments/verify', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 };

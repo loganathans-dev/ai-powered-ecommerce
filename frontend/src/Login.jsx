@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useAppContext } from './context/AppContext'
 import { api } from './services/api'
 import { toast } from 'react-toastify'
 
 export default function Login() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const redirect = new URLSearchParams(location.search).get('redirect') || '/'
   const { login } = useAppContext()
   const [loading, setLoading] = useState(false)
 
@@ -19,7 +21,7 @@ export default function Login() {
     try {
       const { user } = await api.login(email, password)
       login(user)
-      navigate('/home')
+      navigate(redirect)
     } catch (err) {
       toast.error(err.message || 'Login failed')
     } finally {
@@ -37,12 +39,12 @@ export default function Login() {
         <form className="flex flex-col gap-5" onSubmit={handleLogin}>
           <div className="flex flex-col gap-2">
             <label htmlFor="email" className="text-sm font-medium text-slate-700 dark:text-slate-300">Email ID</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email ID" required defaultValue="john.doe@example.com"
+            <input type="email" id="email" name="email" placeholder="Enter your email ID" required
               className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-all outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" />
           </div>
           <div className="flex flex-col gap-2">
             <label htmlFor="password" className="text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required defaultValue="password"
+            <input type="password" id="password" name="password" placeholder="Enter your password" required
               className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-all outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" />
           </div>
           <button type="submit" disabled={loading} className="mt-2.5 p-3.5 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-600/20 active:scale-95 disabled:opacity-60">

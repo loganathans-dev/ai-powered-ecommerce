@@ -5,7 +5,7 @@ import { Trash2, Minus, Plus, ArrowRight } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
 const Cart = () => {
-  const { cart, removeFromCart, updateCartQuantity, cartTotal } = useAppContext();
+  const { cart, removeFromCart, updateCartQuantity, cartTotal, user } = useAppContext();
   const navigate = useNavigate();
 
   if (cart.length === 0) {
@@ -125,7 +125,7 @@ const Cart = () => {
             </div>
 
             <button
-              onClick={() => navigate('/address')}
+              onClick={() => user ? navigate('/checkout') : navigate('/login?redirect=/checkout')}
               className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2"
             >
               Checkout <ArrowRight size={20} />

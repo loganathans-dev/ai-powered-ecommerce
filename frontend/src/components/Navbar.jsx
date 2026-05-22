@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { ShoppingCart, User, Sun, Moon, Search, Menu, X, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,6 +12,7 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [allProducts, setAllProducts] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
   const searchRef = useRef(null);
 
   useEffect(() => {
@@ -30,14 +31,12 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
   const navLinks = [
-    { name: "Men's", path: "/mens" },
-    { name: "Women's", path: "/womens" },
-    { name: "Kids", path: "/kids" },
-    { name: "Brands", path: "/brands" }
+    { name: "Home", path: "/" },
+    { name: "Products", path: "/products" }
   ];
 
   const filteredProducts = allProducts.filter(product =>
@@ -50,7 +49,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link to="/home" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent hidden sm:block">
               ShoeShop
             </span>
@@ -59,15 +58,22 @@ const Navbar = () => {
           <div className="flex items-center gap-8 lg:gap-12">
             {/* Desktop Nav Links */}
             <div className="hidden md:flex items-center gap-6 lg:gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors"
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = location.pathname === link.path || (link.path !== '/' && location.pathname.startsWith(link.path));
+                return (
+                  <Link
+                    key={link.name}
+                    to={link.path}
+                    className={`font-medium transition-colors ${
+                      isActive 
+                        ? 'text-indigo-600 dark:text-indigo-400 font-bold' 
+                        : 'text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400'
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
             </div>
 
             {/* Right Actions */}
@@ -149,12 +155,6 @@ const Navbar = () => {
                 {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
               </button>
 
-              <Link to="/profile" className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 p-2 hidden sm:block">
-                <User size={20} />
-              </Link>
-
-
-
               <Link to="/cart" className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 p-2 relative">
                 <ShoppingCart size={20} />
                 {cartCount > 0 && (
@@ -164,10 +164,20 @@ const Navbar = () => {
                 )}
               </Link>
 
-              {user && (
-                <button onClick={handleLogout} className="text-slate-600 dark:text-slate-300 hover:text-red-500 p-2 hidden sm:block" title="Logout">
-                  <LogOut size={20} />
-                </button>
+              {user ? (
+                <>
+                  <Link to="/profile" className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 p-2 hidden sm:block" title="Profile">
+                    <User size={20} />
+                  </Link>
+                  <button onClick={handleLogout} className="text-slate-600 dark:text-slate-300 hover:text-red-500 p-2 hidden sm:block" title="Logout">
+                    <LogOut size={20} />
+                  </button>
+                </>
+              ) : (
+                <div className="hidden sm:flex items-center gap-4 ml-2">
+                  <Link to="/login" className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 font-medium">Login</Link>
+                  <Link to="/signup" className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 font-medium">Sign up</Link>
+                </div>
               )}
 
               {/* Mobile Menu Toggle */}
@@ -191,26 +201,22 @@ const Navbar = () => {
             className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
           >
             <div className="px-4 py-6 flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-lg font-medium text-slate-800 dark:text-slate-200"
-                >
-                  {link.name}
-                </Link>
-              ))}
+              <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname === '/' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>Home</Link>
+              <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname.startsWith('/products') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>Products</Link>
+              <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname.startsWith('/cart') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>Cart</Link>
+              
               <hr className="border-slate-200 dark:border-slate-800" />
-              <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-slate-800 dark:text-slate-200">Profile</Link>
-              <Link to="/orders" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-slate-800 dark:text-slate-200">My Orders</Link>
-              {user && (
-                <button
-                  onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
-                  className="text-lg font-medium text-red-500 text-left"
-                >
-                  Logout
-                </button>
+              
+              {user ? (
+                <>
+                  <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname.startsWith('/profile') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>Profile</Link>
+                  <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="text-lg font-medium text-red-500 text-left">Logout</button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname.startsWith('/login') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>Login</Link>
+                  <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname.startsWith('/signup') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>Signup</Link>
+                </>
               )}
             </div>
           </motion.div>

@@ -26,6 +26,7 @@ export default function Signup() {
         name: form.name.value,
         email: form.email.value,
         password,
+        phone: form.phone?.value || '',
       })
       login(user)
       navigate('/home')
@@ -52,6 +53,11 @@ export default function Signup() {
           <div className="flex flex-col gap-2">
             <label htmlFor="email" className="text-sm font-medium text-slate-700 dark:text-slate-300">Mail ID</label>
             <input type="email" id="email" name="email" placeholder="Enter your mail ID" required
+              className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-all outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 placeholder:text-slate-400" />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="phone" className="text-sm font-medium text-slate-700 dark:text-slate-300">Phone (optional)</label>
+            <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210"
               className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-all outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 placeholder:text-slate-400" />
           </div>
           <div className="flex flex-col gap-2">
