@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Star, Truck, ShieldCheck, Heart, Minus, Plus } from 'lucide-react';
+import { Star, Truck, ShieldCheck, Heart, HeartPlus, Minus, Plus } from 'lucide-react';
 import { api } from '../services/api';
 import { useAppContext } from '../context/AppContext';
 
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart, toggleWishlist, isInWishlist } = useAppContext();
+  const location = useLocation();
+  const { addToCart, toggleWishlist, isInWishlist, user } = useAppContext();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -203,13 +204,23 @@ const ProductDetails = () => {
               Add to Cart
             </button>
             <button
-              onClick={() => toggleWishlist(product)}
+              onClick={() => {
+                if (!user) {
+                  navigate(`/login?redirect=${location.pathname}`);
+                  return;
+                }
+                toggleWishlist(product);
+              }}
               className={`px-6 py-4 border-2 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-colors ${isWishlisted
                   ? 'border-red-500 text-red-500 bg-red-50 dark:bg-red-900/10'
                   : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'
                 }`}
             >
-              <Heart size={24} fill={isWishlisted ? "currentColor" : "none"} />
+              {isWishlisted ? (
+                <Heart size={24} fill="currentColor" />
+              ) : (
+                <HeartPlus size={24} />
+              )}
             </button>
           </div>
 

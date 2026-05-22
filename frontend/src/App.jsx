@@ -13,12 +13,14 @@ import Address from './pages/Address'
 import Payment from './pages/Payment'
 import MyOrder from './pages/MyOrder'
 import Profile from './pages/Profile'
+import Wishlist from './pages/Wishlist'
 import Terms from './pages/Terms'
 import AdminLayout from './admin/AdminLayout'
 import AdminDashboard from './admin/AdminDashboard'
 import ManageProducts from './admin/ManageProducts'
 import AdminOrders from './admin/AdminOrders'
 import AdminLogin from './admin/AdminLogin'
+import AdminSettings from './admin/AdminSettings'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function ScrollToTop() {
@@ -45,17 +47,18 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Navigate to="/" replace />} />
           <Route path="/products" element={<ProductList title="All Products" />} />
-          <Route path="/mens" element={<ProductList category="mens" title="Men's Collection" />} />
-          <Route path="/womens" element={<ProductList category="womens" title="Women's Collection" />} />
-          <Route path="/kids" element={<ProductList category="kids" title="Kids Collection" />} />
+          <Route path="/products/men" element={<ProductList category="mens" title="Men's Collection" />} />
+          <Route path="/products/women" element={<ProductList category="womens" title="Women's Collection" />} />
+          <Route path="/products/kids" element={<ProductList category="kids" title="Kids Collection" />} />
           <Route path="/brands" element={<ProductList title="All Brands" />} />
           <Route path="/product/:id" element={<ProductDetails />} />
 
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<ProtectedRoute><Address /></ProtectedRoute>} />
           <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
-          <Route path="/orders" element={<MyOrder />} />
+          <Route path="/orders" element={<ProtectedRoute><MyOrder /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
           <Route path="/terms" element={<Terms />} />
         </Route>
 
@@ -64,6 +67,7 @@ function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="products" element={<ManageProducts />} />
           <Route path="orders" element={<AdminOrders />} />
+          <Route path="settings" element={<AdminSettings />} />
         </Route>
       </Routes>
     </BrowserRouter>

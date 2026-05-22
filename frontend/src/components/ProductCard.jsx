@@ -1,11 +1,24 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Star } from 'lucide-react';
+import { ShoppingCart, Star, Heart, HeartPlus } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const ProductCard = ({ product, index = 0 }) => {
-  const { addToCart } = useAppContext();
+  const { addToCart, user, toggleWishlist, isInWishlist } = useAppContext();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isWishlisted = isInWishlist(product.id);
+
+  const handleWishlistClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      navigate(`/login?redirect=${location.pathname}`);
+      return;
+    }
+    toggleWishlist(product);
+  };
 
   return (
     <motion.div 
@@ -24,9 +37,26 @@ const ProductCard = ({ product, index = 0 }) => {
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </Link>
-        
 
-
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={handleWishlistClick}
+          className="absolute top-3 right-3 p-0.5 rounded-md bg-white shadow-sm border border-slate-200 text-slate-900 hover:text-red-500 z-10 transition-colors"
+        >
+          <motion.div
+            key={isWishlisted ? 'liked' : 'unliked'}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+          >
+            {isWishlisted ? (
+              <Heart size={18} className="text-red-500 fill-red-500" />
+            ) : (
+              <HeartPlus size={18} />
+            )}
+          </motion.div>
+        </motion.button>
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {product.offer > 0 && (

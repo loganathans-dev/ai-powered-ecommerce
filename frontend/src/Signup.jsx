@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useAppContext } from './context/AppContext'
 import { api } from './services/api'
 import { toast } from 'react-toastify'
 
 export default function Signup() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const redirect = new URLSearchParams(location.search).get('redirect') || '/'
   const { login } = useAppContext()
   const [loading, setLoading] = useState(false)
 
@@ -29,7 +31,7 @@ export default function Signup() {
         phone: form.phone?.value || '',
       })
       login(user)
-      navigate('/home')
+      navigate(redirect)
     } catch (err) {
       toast.error(err.message || 'Signup failed')
     } finally {
@@ -74,7 +76,7 @@ export default function Signup() {
             {loading ? 'Creating account...' : 'Signup'}
           </button>
           <p className="text-center mt-4 text-sm text-slate-600 dark:text-slate-400">
-            Already have an account? <span onClick={() => navigate('/login')} className="text-indigo-600 font-semibold cursor-pointer hover:underline">Sign in</span>
+            Already have an account? <span onClick={() => navigate(`/login?redirect=${redirect}`)} className="text-indigo-600 font-semibold cursor-pointer hover:underline">Sign in</span>
           </p>
         </form>
       </div>

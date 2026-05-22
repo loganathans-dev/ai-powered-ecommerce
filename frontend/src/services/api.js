@@ -89,6 +89,8 @@ export const api = {
       body: JSON.stringify({ username, password }),
     }),
 
+  getAdminStats: (period) => request(`/admin/stats${buildQuery({ period })}`),
+
   updateProfile: (data) =>
     request('/auth/profile', {
       method: 'PUT',

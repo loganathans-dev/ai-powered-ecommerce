@@ -1,33 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { IndianRupee, ShoppingBag, Users, ChevronDown, Package, AlertTriangle } from 'lucide-react';
-import { mockOrders, mockCustomers } from '../data/mockData';
 import { api } from '../services/api';
 
 const AdminDashboard = () => {
   const [timeFilter, setTimeFilter] = useState('30days');
   const [recentOrders, setRecentOrders] = useState([]);
   const [products, setProducts] = useState([]);
+  const [stats, setStats] = useState({
+    revenue: 0,
+    orders: 0,
+    customers: 0,
+    recentOrders: [],
+    topProducts: [],
+    totalUsers: 0
+  });
 
   useEffect(() => {
-    // Use mock data instead of API call to show all orders
-    setRecentOrders(mockOrders);
+    // Fetch real stats from the API
+    api.getAdminStats(timeFilter)
+      .then(data => {
+        setStats(data);
+        setRecentOrders(data.recentOrders || []);
+      })
+      .catch(console.error);
+      
     api.getProducts().then(setProducts).catch(console.error);
-  }, []);
+  }, [timeFilter]);
 
-  // Use mock data for stats
-  const getStats = (filter) => {
-    const totalRevenue = mockOrders.reduce((sum, order) => sum + order.total, 0);
-    
-    return {
-      revenue: '₹' + totalRevenue.toLocaleString('en-IN'),
-      orders: mockOrders.length.toString(),
-      customers: mockCustomers.length.toString(),
-      totalProducts: products.length.toString()
-    };
+  const formattedStats = {
+    revenue: '₹' + (stats.revenue || 0).toLocaleString('en-IN'),
+    orders: (stats.orders || 0).toString(),
+    customers: (stats.customers || 0).toString(), // active buyers (users who placed orders)
+    activeBuyers: (stats.activeBuyers || 0).toString(), // buyers who placed orders
+    totalProducts: products.length.toString()
   };
-
-  const stats = getStats(timeFilter);
   // Filter products with stock <= 10 (or assume 0/missing for mock data)
   // Since mock data doesn't have stock initially, we will pretend some are low stock.
   // In reality, we'll sort by stock.
@@ -36,7 +43,10 @@ const AdminDashboard = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Dashboard Overview</h1>
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Dashboard Overview</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Monitor your store performance at a glance.</p>
+        </div>
         
         <div className="relative">
           <select 
@@ -53,15 +63,17 @@ const AdminDashboard = () => {
         </div>
       </div>
 
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard title="Total Revenue" value={stats.revenue} icon={IndianRupee} trend="+12.5%" />
-        <StatCard title="Orders" value={stats.orders} icon={ShoppingBag} trend="+8.2%" />
-        <StatCard title="Total Products" value={stats.totalProducts} icon={Package} trend="+5.0%" />
-        <StatCard title="Customers" value={stats.customers} icon={Users} trend="+15.3%" />
+        <StatCard title="Total Revenue" value={formattedStats.revenue} icon={IndianRupee} trend={stats.revenueTrend} />
+        <StatCard title="Orders" value={formattedStats.orders} icon={ShoppingBag} trend={stats.ordersTrend} />
+        <StatCard title="Total Products" value={formattedStats.totalProducts} icon={Package} />
+        <StatCard title="Customers" value={formattedStats.customers} icon={Users} />
+
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Recent Orders */}
         <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
           <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
@@ -70,29 +82,29 @@ const AdminDashboard = () => {
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
-              <thead className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-sm">
-                <tr>
-                  <th className="px-6 py-4 font-medium">Order ID</th>
-                  <th className="px-6 py-4 font-medium">Date</th>
-                  <th className="px-6 py-4 font-medium">Status</th>
-                  <th className="px-6 py-4 font-medium">Total</th>
+              <thead>
+                <tr className="border-b border-slate-200 dark:border-slate-700">
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Order ID</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Date</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                 {recentOrders.map(order => (
-                  <tr key={order.id} className="text-slate-900 dark:text-white">
-                    <td className="px-6 py-4 font-medium">{order.id}</td>
-                    <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{new Date(order.date).toLocaleDateString()}</td>
+                  <tr key={order.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                    <td className="px-6 py-4 text-sm font-semibold text-indigo-600 dark:text-indigo-400">{order.id}</td>
+                    <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{new Date(order.date).toLocaleDateString()}</td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex px-2.5 py-1 rounded-md text-xs font-medium ${
+                      <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
                         order.status === 'Delivered' 
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
-                          : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' 
+                          : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                       }`}>
                         {order.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-medium">₹{order.total.toFixed(2)}</td>
+                    <td className="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">₹{order.total.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -105,27 +117,19 @@ const AdminDashboard = () => {
           <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-6">Top Products</h2>
             <div className="flex flex-col gap-4">
-              <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700">
-                <div>
-                  <p className="font-bold text-slate-900 dark:text-white">Nike Air Max 270</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">124 sales</p>
-                </div>
-                <span className="font-bold text-indigo-600 dark:text-indigo-400">₹18,600</span>
-              </div>
-              <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700">
-                <div>
-                  <p className="font-bold text-slate-900 dark:text-white">Adidas Ultraboost</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">89 sales</p>
-                </div>
-                <span className="font-bold text-indigo-600 dark:text-indigo-400">₹16,910</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="font-bold text-slate-900 dark:text-white">Nike Air Force 1</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">76 sales</p>
-                </div>
-                <span className="font-bold text-indigo-600 dark:text-indigo-400">₹8,740</span>
-              </div>
+              {stats.topProducts && stats.topProducts.length > 0 ? (
+                stats.topProducts.map((tp, idx) => (
+                  <div key={idx} className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700 last:border-0">
+                    <div>
+                      <p className="text-sm font-bold text-slate-900 dark:text-white">{tp.name}</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{tp.quantity} sales</p>
+                    </div>
+                    <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">₹{tp.revenue.toLocaleString('en-IN')}</span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-slate-500 dark:text-slate-400">No sales data available yet.</p>
+              )}
             </div>
           </div>
           
@@ -166,19 +170,38 @@ const AdminDashboard = () => {
   );
 };
 
-const StatCard = ({ title, value, icon: Icon, trend }) => (
-  <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-    <div className="flex justify-between items-start mb-4">
-      <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl">
-        <Icon size={24} />
+const StatCard = ({ title, value, icon: Icon, trend }) => {
+  let trendColor = 'text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400';
+  let trendText = '0%';
+  
+  if (trend !== undefined && trend !== null) {
+    if (trend > 0) {
+      trendColor = 'text-green-600 bg-green-50 dark:bg-green-900/30 dark:text-green-400';
+      trendText = `+${trend}%`;
+    } else if (trend < 0) {
+      trendColor = 'text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-400';
+      trendText = `${trend}%`;
+    } else {
+      trendText = '0%';
+    }
+  }
+
+  return (
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+      <div className="flex justify-between items-start mb-4">
+        <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl">
+          <Icon size={24} />
+        </div>
+        {trend !== undefined && trend !== null && (
+          <span className={`text-sm font-medium px-2 py-1 rounded ${trendColor}`}>
+            {trendText}
+          </span>
+        )}
       </div>
-      <span className="text-sm font-medium text-green-600 bg-green-50 dark:bg-green-900/30 dark:text-green-400 px-2 py-1 rounded">
-        {trend}
-      </span>
+      <h3 className="text-slate-500 dark:text-slate-400 text-xs font-medium mb-1">{title}</h3>
+      <p className="text-2xl font-bold text-slate-900 dark:text-white">{value}</p>
     </div>
-    <h3 className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">{title}</h3>
-    <p className="text-3xl font-bold text-slate-900 dark:text-white">{value}</p>
-  </div>
-);
+  );
+};
 
 export default AdminDashboard;

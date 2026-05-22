@@ -111,7 +111,7 @@ const ManageProducts = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Products</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage your store catalog</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Manage your store catalog</p>
         </div>
         <button 
           onClick={() => handleOpenModal()}
@@ -140,13 +140,13 @@ const ManageProducts = () => {
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-sm">
-              <tr>
-                <th className="px-6 py-4 font-medium">Product</th>
-                <th className="px-6 py-4 font-medium">Category</th>
-                <th className="px-6 py-4 font-medium">Price</th>
-                <th className="px-6 py-4 font-medium">Stock</th>
-                <th className="px-6 py-4 font-medium text-right">Actions</th>
+            <thead>
+              <tr className="border-b border-slate-200 dark:border-slate-700">
+                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Product</th>
+                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Category</th>
+                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Price</th>
+                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Stock</th>
+                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
@@ -158,14 +158,14 @@ const ManageProducts = () => {
                         <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
                       </div>
                       <div>
-                        <p className="font-bold text-slate-900 dark:text-white line-clamp-1">{product.name}</p>
+                        <p className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">{product.name}</p>
                         <p className="text-xs text-slate-500 dark:text-slate-400">{product.brand}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-slate-600 dark:text-slate-300 capitalize">{product.category}</td>
-                  <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">₹{product.price}</td>
-                  <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{product.stock || 0}</td>
+                  <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-300 capitalize">{product.category}</td>
+                  <td className="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">₹{product.price}</td>
+                  <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">{product.stock || 0}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button 

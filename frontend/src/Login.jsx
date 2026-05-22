@@ -43,7 +43,10 @@ export default function Login() {
               className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-all outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" />
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="password" className="text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
+            <div className="flex justify-between items-center">
+              <label htmlFor="password" className="text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
+              <span className="text-xs text-indigo-600 hover:underline cursor-pointer font-medium" onClick={() => toast.info('Password reset link sent to email')}>Forgot password?</span>
+            </div>
             <input type="password" id="password" name="password" placeholder="Enter your password" required
               className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-all outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" />
           </div>
@@ -53,7 +56,7 @@ export default function Login() {
 
           <div className="flex flex-col gap-2 mt-4 text-center text-sm">
             <p className="text-slate-600 dark:text-slate-400">
-              Don't have an account? <span onClick={() => navigate('/signup')} className="text-indigo-600 font-semibold cursor-pointer hover:underline">Sign up</span>
+              Don't have an account? <span onClick={() => navigate(`/signup?redirect=${redirect}`)} className="text-indigo-600 font-semibold cursor-pointer hover:underline">Sign up</span>
             </p>
           </div>
         </form>

@@ -21,6 +21,7 @@ const AdminLayout = () => {
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
     { name: 'Products', path: '/admin/products', icon: Package },
     { name: 'Orders', path: '/admin/orders', icon: ShoppingBag },
+    { name: 'Settings', path: '/admin/settings', icon: Settings },
   ];
 
   return (
@@ -42,7 +43,7 @@ const AdminLayout = () => {
               <Link
                 key={link.name}
                 to={link.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors ${isActive
                     ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 font-bold'
                     : 'text-slate-600 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-700/50 hover:text-slate-900 dark:hover:text-white font-medium'
                   }`}
@@ -55,12 +56,9 @@ const AdminLayout = () => {
         </nav>
 
         <div className="p-4 mt-auto border-t border-slate-200 dark:border-slate-700 flex flex-col gap-2">
-          <button className="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-slate-600 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-700/50 w-full text-left font-medium">
-            <Settings size={20} /> Settings
-          </button>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left font-medium"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left font-medium"
           >
             <LogOut size={20} /> Logout
           </button>

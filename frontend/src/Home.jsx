@@ -50,10 +50,10 @@ const Home = () => {
               Discover the latest collections from top brands. Elevate your style and performance with our premium selection of footwear.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link to="/mens" className="px-8 py-4 bg-indigo-600 text-white rounded-full font-bold text-lg hover:bg-indigo-700 transition-colors inline-flex items-center gap-2">
+              <Link to="/products/men" className="px-8 py-4 bg-indigo-600 text-white rounded-full font-bold text-lg hover:bg-indigo-700 transition-colors inline-flex items-center gap-2">
                 Shop Men's <ArrowRight size={20} />
               </Link>
-              <Link to="/womens" className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/20 transition-colors">
+              <Link to="/products/women" className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/20 transition-colors">
                 Shop Women's
               </Link>
             </div>
@@ -80,7 +80,7 @@ const Home = () => {
               <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Trending Now</h2>
               <p className="text-slate-500 dark:text-slate-400">Our most popular styles this week</p>
             </div>
-            <Link to="/mens" className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline flex items-center gap-1">
+            <Link to="/products" className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline flex items-center gap-1">
               View All <ArrowRight size={16} />
             </Link>
           </div>
@@ -93,6 +93,19 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Promotional Section */}
+      <section className="py-16 bg-indigo-600 dark:bg-indigo-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between">
+          <div className="text-white mb-8 md:mb-0 max-w-xl">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Summer Sale is Live!</h2>
+            <p className="text-indigo-100 text-lg">Get up to 40% off on selected premium footwear. Limited time offer, don't miss out on these exclusive styles.</p>
+          </div>
+          <Link to="/products" className="px-8 py-4 bg-white text-indigo-600 rounded-full font-bold text-lg hover:bg-indigo-50 transition-colors inline-flex items-center gap-2 shadow-xl shadow-black/10">
+            Explore Offers <ArrowRight size={20} />
+          </Link>
+        </div>
+      </section>
+
       {/* Categories */}
       <section className="py-20 bg-white dark:bg-slate-800 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -100,17 +113,17 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <CategoryCard
               title="Men's"
-              path="/mens"
+              path="/products/men"
               imgUrl="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop"
             />
             <CategoryCard
               title="Women's"
-              path="/womens"
+              path="/products/women"
               imgUrl="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop"
             />
             <CategoryCard
               title="Kids"
-              path="/kids"
+              path="/products/kids"
               imgUrl="https://images.unsplash.com/photo-1514989940723-e8e51635b782?q=80&w=800&auto=format&fit=crop"
             />
           </div>

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import { ShoppingCart, User, Sun, Moon, Search, Menu, X, LogOut } from 'lucide-react';
+import { ShoppingCart, User, Sun, Moon, Search, Menu, X, LogOut, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../services/api';
 
 const Navbar = () => {
-  const { theme, toggleTheme, cartCount, user, logout } = useAppContext();
+  const { theme, toggleTheme, cartCount, user, logout, wishlist } = useAppContext();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -36,7 +36,10 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "Products", path: "/products" }
+    { name: "Products", path: "/products" },
+    { name: "Mens", path: "/products/men" },
+    { name: "Womens", path: "/products/women" },
+    { name: "Kids", path: "/products/kids" }
   ];
 
   const filteredProducts = allProducts.filter(product =>
@@ -155,6 +158,16 @@ const Navbar = () => {
                 {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
               </button>
 
+              {user && (
+                <Link to="/wishlist" className="text-slate-600 dark:text-slate-300 hover:text-red-500 p-2 relative transition-colors">
+                  <Heart size={20} />
+                  {wishlist.length > 0 && (
+                    <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center translate-x-1 -translate-y-1">
+                      {wishlist.length}
+                    </span>
+                  )}
+                </Link>
+              )}
               <Link to="/cart" className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 p-2 relative">
                 <ShoppingCart size={20} />
                 {cartCount > 0 && (
@@ -165,14 +178,20 @@ const Navbar = () => {
               </Link>
 
               {user ? (
-                <>
-                  <Link to="/profile" className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 p-2 hidden sm:block" title="Profile">
+                <div className="relative group hidden sm:block">
+                  <button className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 p-2 flex items-center gap-1">
                     <User size={20} />
-                  </Link>
-                  <button onClick={handleLogout} className="text-slate-600 dark:text-slate-300 hover:text-red-500 p-2 hidden sm:block" title="Logout">
-                    <LogOut size={20} />
                   </button>
-                </>
+                  <div className="absolute right-0 mt-0 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-100 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 py-2">
+                    <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-700 mb-1">
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{user.name || 'User'}</p>
+                    </div>
+                    <Link to="/profile" className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">Profile</Link>
+                    <Link to="/orders" className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">My Orders</Link>
+                    <Link to="/wishlist" className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">Wishlist</Link>
+                    <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-slate-50 dark:hover:bg-slate-700">Logout</button>
+                  </div>
+                </div>
               ) : (
                 <div className="hidden sm:flex items-center gap-4 ml-2">
                   <Link to="/login" className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 font-medium">Login</Link>
@@ -203,6 +222,9 @@ const Navbar = () => {
             <div className="px-4 py-6 flex flex-col gap-4">
               <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname === '/' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>Home</Link>
               <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname.startsWith('/products') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>Products</Link>
+              <Link to="/products/men" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname.startsWith('/products/men') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>Mens</Link>
+              <Link to="/products/women" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname.startsWith('/products/women') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>Womens</Link>
+              <Link to="/products/kids" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname.startsWith('/products/kids') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>Kids</Link>
               <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname.startsWith('/cart') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>Cart</Link>
               
               <hr className="border-slate-200 dark:border-slate-800" />
@@ -210,6 +232,8 @@ const Navbar = () => {
               {user ? (
                 <>
                   <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname.startsWith('/profile') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>Profile</Link>
+                  <Link to="/orders" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname.startsWith('/orders') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>My Orders</Link>
+                  <Link to="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname.startsWith('/wishlist') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-800 dark:text-slate-200'}`}>Wishlist</Link>
                   <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="text-lg font-medium text-red-500 text-left">Logout</button>
                 </>
               ) : (
