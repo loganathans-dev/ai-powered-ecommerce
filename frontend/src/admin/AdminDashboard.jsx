@@ -31,7 +31,7 @@ const AdminDashboard = () => {
   const formattedStats = {
     revenue: '₹' + (stats.revenue || 0).toLocaleString('en-IN'),
     orders: (stats.orders || 0).toString(),
-    customers: (stats.customers || 0).toString(), // active buyers (users who placed orders)
+    customers: (stats.totalUsers || 0).toString(), // total registered users
     activeBuyers: (stats.activeBuyers || 0).toString(), // buyers who placed orders
     totalProducts: products.length.toString()
   };

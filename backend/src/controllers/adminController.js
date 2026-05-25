@@ -86,8 +86,7 @@ const getDashboardStats = async (req, res) => {
   res.json({
     revenue,
     orders: orderCount,
-    customers, // active buyers (users who placed orders)
-    totalUsers, // total registered users
+    totalUsers: totalUsers, // total registered users
     conversionRate,
     revenueTrend,
     ordersTrend,

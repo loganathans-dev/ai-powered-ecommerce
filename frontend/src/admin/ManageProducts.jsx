@@ -97,7 +97,18 @@ const ManageProducts = () => {
         toast.success('Product updated');
       } else {
         const created = await api.createProduct(payload);
-        setProducts([created, ...products]);
+        // Normalize response to match UI expectations
+        const normalized = {
+          id: created.id || created._id,
+          name: created.name,
+          brand: created.brand,
+          category: created.category,
+          price: created.price,
+          stock: created.stock ?? 0,
+          images: created.images?.length ? created.images : [created.imageUrl || payload.images[0]],
+          sizes: created.sizes ?? [],
+        };
+        setProducts([normalized, ...products]);
         toast.success('Product created');
       }
       setIsModalOpen(false);
