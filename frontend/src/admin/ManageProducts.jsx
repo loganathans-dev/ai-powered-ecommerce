@@ -254,164 +254,91 @@ const ManageProducts = () => {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl w-full max-w-md overflow-hidden">
-            <div className="flex justify-between items-center p-6 border-b border-slate-200 dark:border-slate-700">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl w-full max-w-lg overflow-hidden flex flex-col">
+            <div className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700 shrink-0">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">
                 {editingProduct ? 'Edit Product' : 'Add Product'}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
-                <X size={20} />
+              <button type="button" onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                <X size={18} />
               </button>
             </div>
-            <form onSubmit={handleSave} className="p-6 flex flex-col gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Product Name</label>
-                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-slate-900 dark:text-white" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleSave} className="p-4 flex flex-col gap-3 overflow-y-auto">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Brand</label>
+                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Product Name</label>
+                  <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-3 py-1.5 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-900 dark:text-white" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Brand</label>
                   {isAddingNewBrand ? (
                     <div className="flex gap-2">
-                      <input 
-                        required 
-                        autoFocus
-                        type="text" 
-                        placeholder="Enter new brand name..."
-                        value={formData.brand} 
-                        onChange={e => setFormData({...formData, brand: e.target.value})} 
-                        className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-slate-900 dark:text-white" 
-                      />
-                      <button 
-                        type="button" 
-                        onClick={() => {
-                          if (formData.brand.trim()) {
-                            setCustomBrands([...customBrands, formData.brand.trim()]);
-                            setIsAddingNewBrand(false);
-                          }
-                        }}
-                        className="p-2 text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 bg-slate-100 dark:bg-slate-800 rounded-xl transition-colors"
-                        title="Confirm new brand"
-                      >
-                        <Check size={20} />
-                      </button>
-                      <button 
-                        type="button" 
-                        onClick={() => {
-                          setIsAddingNewBrand(false);
-                          setFormData({...formData, brand: ''});
-                        }}
-                        className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white bg-slate-100 dark:bg-slate-800 rounded-xl transition-colors"
-                        title="Cancel adding new brand"
-                      >
-                        <X size={20} />
-                      </button>
+                      <input required autoFocus type="text" placeholder="New brand..." value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} className="w-full px-3 py-1.5 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-900 dark:text-white" />
+                      <button type="button" onClick={() => { if (formData.brand.trim()) { setCustomBrands([...customBrands, formData.brand.trim()]); setIsAddingNewBrand(false); } }} className="p-1.5 text-indigo-600 hover:text-indigo-800 bg-slate-100 rounded-lg"><Check size={16} /></button>
+                      <button type="button" onClick={() => { setIsAddingNewBrand(false); setFormData({...formData, brand: ''}); }} className="p-1.5 text-slate-400 hover:text-slate-600 bg-slate-100 rounded-lg"><X size={16} /></button>
                     </div>
                   ) : (
-                    <select 
-                      required 
-                      value={allBrands.includes(formData.brand) ? formData.brand : (formData.brand ? 'ADD_NEW' : '')} 
-                      onChange={e => {
-                        if (e.target.value === 'ADD_NEW') {
-                          setIsAddingNewBrand(true);
-                          setFormData({...formData, brand: ''});
-                        } else {
-                          setFormData({...formData, brand: e.target.value});
-                        }
-                      }} 
-                      className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-slate-900 dark:text-white"
-                    >
-                      <option value="" disabled>Select a brand</option>
-                      {allBrands.map(brand => (
-                        <option key={brand} value={brand}>{brand}</option>
-                      ))}
+                    <select required value={allBrands.includes(formData.brand) ? formData.brand : (formData.brand ? 'ADD_NEW' : '')} onChange={e => { if (e.target.value === 'ADD_NEW') { setIsAddingNewBrand(true); setFormData({...formData, brand: ''}); } else { setFormData({...formData, brand: e.target.value}); } }} className="w-full px-3 py-1.5 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-900 dark:text-white">
+                      <option value="" disabled>Select brand</option>
+                      {allBrands.map(brand => <option key={brand} value={brand}>{brand}</option>)}
                       <option value="ADD_NEW">+ Add New Brand</option>
                     </select>
                   )}
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Price (₹)</label>
-                  <input required type="number" min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-slate-900 dark:text-white" />
-                </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+
+              <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Category</label>
-                  <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-slate-900 dark:text-white">
+                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Price (₹)</label>
+                  <input required type="number" min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full px-3 py-1.5 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-900 dark:text-white" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Category</label>
+                  <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full px-3 py-1.5 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-900 dark:text-white">
                     <option value="mens">Men's</option>
                     <option value="womens">Women's</option>
                     <option value="kids">Kids</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Stock Quantity</label>
-                  <input required type="number" min="0" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-slate-900 dark:text-white" />
+                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Stock</label>
+                  <input required type="number" min="0" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} className="w-full px-3 py-1.5 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-900 dark:text-white" />
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Upload Image (saved to MongoDB Atlas)
-                </label>
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                  onChange={handleImageFileChange}
-                  className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-slate-900 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-400"
-                />
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  Local files are compressed and stored in Atlas. They work after deploy.
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Or image URL (https://...)
-                </label>
-                <input
-                  type="url"
-                  placeholder="https://example.com/shoe.jpg"
-                  value={formData.imageUrl}
-                  onChange={(e) => {
-                    setFormData({ ...formData, imageUrl: e.target.value, imageFile: null });
-                    setImagePreview(e.target.value);
-                  }}
-                  className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-slate-900 dark:text-white"
-                />
-              </div>
-              {imagePreview && (
-                <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 w-24 h-24 bg-slate-100 dark:bg-slate-900">
-                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+
+              <div className="grid grid-cols-2 gap-3 items-end">
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Image File (Atlas)</label>
+                  <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleImageFileChange} className="w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:bg-indigo-50 file:text-indigo-700" />
                 </div>
-              )}
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Or URL</label>
+                    <input type="url" placeholder="https://..." value={formData.imageUrl} onChange={(e) => { setFormData({ ...formData, imageUrl: e.target.value, imageFile: null }); setImagePreview(e.target.value); }} className="w-full px-3 py-1.5 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-900 dark:text-white" />
+                  </div>
+                  {imagePreview && (
+                    <div className="w-10 h-10 rounded-lg overflow-hidden border border-slate-200 shrink-0">
+                      <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Available Sizes</label>
-                <div className="flex flex-wrap gap-3">
+                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Sizes</label>
+                <div className="flex flex-wrap gap-2">
                   {[6, 7, 8, 9, 10, 11, 12].map(size => (
-                    <label key={size} className="flex items-center gap-1.5 cursor-pointer">
-                      <input 
-                        type="checkbox" 
-                        checked={formData.sizes.includes(size)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setFormData({...formData, sizes: [...formData.sizes, size].sort((a,b)=>a-b)});
-                          } else {
-                            setFormData({...formData, sizes: formData.sizes.filter(s => s !== size)});
-                          }
-                        }}
-                        className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-900 dark:border-slate-600"
-                      />
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{size}</span>
+                    <label key={size} className="flex items-center gap-1 cursor-pointer">
+                      <input type="checkbox" checked={formData.sizes.includes(size)} onChange={(e) => { if (e.target.checked) { setFormData({...formData, sizes: [...formData.sizes, size].sort((a,b)=>a-b)}); } else { setFormData({...formData, sizes: formData.sizes.filter(s => s !== size)}); } }} className="w-3.5 h-3.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 bg-white" />
+                      <span className="text-xs font-medium text-slate-700 dark:text-slate-300">{size}</span>
                     </label>
                   ))}
                 </div>
               </div>
               
-              <div className="flex justify-end gap-3 mt-4">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl font-medium transition-colors">
-                  Cancel
-                </button>
-                <button type="submit" disabled={saving} className="px-4 py-2 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors disabled:opacity-60">
-                  {saving ? 'Saving...' : editingProduct ? 'Save Changes' : 'Add Product'}
-                </button>
+              <div className="flex justify-end gap-2 mt-2 pt-3 border-t border-slate-100 dark:border-slate-700">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-1.5 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg font-medium transition-colors">Cancel</button>
+                <button type="submit" disabled={saving} className="px-4 py-1.5 text-sm bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-60">{saving ? 'Saving...' : editingProduct ? 'Save' : 'Add'}</button>
               </div>
             </form>
           </div>
