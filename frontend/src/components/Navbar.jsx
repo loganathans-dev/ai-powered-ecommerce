@@ -53,7 +53,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent hidden sm:block">
+            <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               ShoeShop
             </span>
           </Link>
@@ -99,7 +99,7 @@ const Navbar = () => {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute top-full right-0 mt-0 mr-3 w-72 sm:w-70 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50 flex flex-col"
+                      className="absolute top-full -right-4 sm:right-0 mt-2 w-56 sm:w-72 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50 flex flex-col shadow-2xl"
                     >
                       {/* Search Input */}
                       <div className="p-1 border-b border-slate-100 dark:border-slate-800">
