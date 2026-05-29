@@ -65,7 +65,7 @@ const Home = () => {
       <section className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left divide-y md:divide-y-0 md:divide-x divide-slate-200 dark:divide-slate-700">
-            <FeatureItem icon={Zap} title="Fast Delivery" desc="Free shipping on orders over $100" />
+            <FeatureItem icon={Zap} title="Fast Delivery" desc="Free shipping on orders over ₹100" />
             <FeatureItem icon={Shield} title="Secure Payments" desc="100% secure payment gateways" className="md:pl-8" />
             <FeatureItem icon={RotateCcw} title="Easy Returns" desc="30-day return policy for any reason" className="md:pl-8" />
           </div>

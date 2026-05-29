@@ -71,7 +71,21 @@ const ManageProducts = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    const finalImageUrl = formData.imageFile ? URL.createObjectURL(formData.imageFile) : formData.imageUrl;
+    let finalImageUrl = formData.imageUrl;
+
+    if (formData.imageFile) {
+      try {
+        finalImageUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(formData.imageFile);
+        });
+      } catch (err) {
+        toast.error('Failed to process image');
+        return;
+      }
+    }
 
     const payload = {
       name: formData.name,

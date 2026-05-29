@@ -108,15 +108,15 @@ const ProductDetails = () => {
             {product.offer > 0 ? (
               <div className="flex items-end gap-3">
                 <span className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
-                  ${(product.price * (1 - product.offer / 100)).toFixed(2)}
+                  ₹{(product.price * (1 - product.offer / 100)).toFixed(2)}
                 </span>
-                <span className="text-xl text-slate-400 line-through mb-1">${product.price}</span>
+                <span className="text-xl text-slate-400 line-through mb-1">₹{product.price}</span>
                 <span className="text-sm font-bold text-red-500 bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded mb-1.5">
                   Save {product.offer}%
                 </span>
               </div>
             ) : (
-              <span className="text-3xl font-bold text-slate-900 dark:text-white">${product.price}</span>
+              <span className="text-3xl font-bold text-slate-900 dark:text-white">₹{product.price}</span>
             )}
           </div>
 
@@ -228,7 +228,7 @@ const ProductDetails = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-200 dark:border-slate-700 pt-8 mt-auto">
             <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
               <Truck className="text-indigo-600 shrink-0" />
-              <span className="text-sm">Free standard shipping over $100</span>
+              <span className="text-sm">Free standard shipping over ₹100</span>
             </div>
             <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
               <ShieldCheck className="text-indigo-600 shrink-0" />
