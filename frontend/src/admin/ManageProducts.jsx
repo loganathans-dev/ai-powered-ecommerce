@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2, X, Check } from 'lucide-react';
 import { api } from '../services/api';
+import { resolveImageUrl } from '../utils/imageUrl';
 import { toast } from 'react-toastify';
 
 const ManageProducts = () => {
@@ -22,6 +23,7 @@ const ManageProducts = () => {
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [isAddingNewBrand, setIsAddingNewBrand] = useState(false);
   const [customBrands, setCustomBrands] = useState([]);
+  const [saving, setSaving] = useState(false);
 
   const filteredProducts = products.filter(p => 
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -71,33 +73,44 @@ const ManageProducts = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    const finalImageUrl = formData.imageFile ? URL.createObjectURL(formData.imageFile) : formData.imageUrl;
-
-    const payload = {
-      name: formData.name,
-      brand: formData.brand,
-      category: formData.category,
-      price: Number(formData.price),
-      stock: Number(formData.stock),
-      sizes: formData.sizes.length > 0 ? formData.sizes : [8, 9, 10],
-      images: [finalImageUrl || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800'],
-      colors: ['#000000', '#ffffff'],
-      description: 'New product description.',
-      featured: false,
-      offer: 0
-    };
+    setSaving(true);
 
     try {
+      let imageUrl = formData.imageUrl;
+
+      if (formData.imageFile) {
+        const { url } = await api.uploadImage(formData.imageFile);
+        imageUrl = url;
+      }
+
+      if (imageUrl?.startsWith('blob:')) {
+        toast.error('Invalid image. Please upload the file again.');
+        return;
+      }
+
+      const payload = {
+        name: formData.name,
+        brand: formData.brand,
+        category: formData.category,
+        price: Number(formData.price),
+        stock: Number(formData.stock),
+        sizes: formData.sizes.length > 0 ? formData.sizes : [8, 9, 10],
+        images: [imageUrl || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800'],
+        colors: ['#000000', '#ffffff'],
+        description: 'New product description.',
+        featured: false,
+        offer: 0
+      };
+
       if (editingProduct) {
         const updated = await api.updateProduct(editingProduct.id, {
           ...payload,
-          images: [finalImageUrl, ...(editingProduct.images.slice(1))]
+          images: [imageUrl || editingProduct.images[0], ...(editingProduct.images.slice(1))],
         });
         setProducts(products.map(p => p.id === editingProduct.id ? updated : p));
         toast.success('Product updated');
       } else {
         const created = await api.createProduct(payload);
-        // Normalize response to match UI expectations
         const normalized = {
           id: created.id || created._id,
           name: created.name,
@@ -105,7 +118,7 @@ const ManageProducts = () => {
           category: created.category,
           price: created.price,
           stock: created.stock ?? 0,
-          images: created.images?.length ? created.images : [created.imageUrl || payload.images[0]],
+          images: created.images?.length ? created.images : [payload.images[0]],
           sizes: created.sizes ?? [],
         };
         setProducts([normalized, ...products]);
@@ -114,6 +127,8 @@ const ManageProducts = () => {
       setIsModalOpen(false);
     } catch (err) {
       toast.error(err.message || 'Failed to save product');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -166,7 +181,7 @@ const ManageProducts = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900 flex-shrink-0">
-                        <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                        <img src={resolveImageUrl(product.images[0])} alt={product.name} className="w-full h-full object-cover" />
                       </div>
                       <div>
                         <p className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">{product.name}</p>
@@ -334,8 +349,8 @@ const ManageProducts = () => {
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl font-medium transition-colors">
                   Cancel
                 </button>
-                <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors">
-                  {editingProduct ? 'Save Changes' : 'Add Product'}
+                <button type="submit" disabled={saving} className="px-4 py-2 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors disabled:opacity-60">
+                  {saving ? 'Saving...' : editingProduct ? 'Save Changes' : 'Add Product'}
                 </button>
               </div>
             </form>

@@ -4,6 +4,7 @@ import { useAppContext } from '../context/AppContext';
 import { ShoppingCart, User, Sun, Moon, Search, Menu, X, LogOut, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../services/api';
+import { resolveImageUrl } from '../utils/imageUrl';
 
 const Navbar = () => {
   const { theme, toggleTheme, cartCount, user, logout, wishlist } = useAppContext();
@@ -129,7 +130,7 @@ const Navbar = () => {
                                   className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                                 >
                                   <div className="w-12 h-12 rounded-md overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0">
-                                    <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                                    <img src={resolveImageUrl(product.images[0])} alt={product.name} className="w-full h-full object-cover" />
                                   </div>
                                   <div className="flex-1 min-w-0">
                                     <h4 className="font-semibold text-sm text-slate-900 dark:text-white truncate">{product.name}</h4>

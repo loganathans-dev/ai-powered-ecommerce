@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Star, Truck, ShieldCheck, Heart, HeartPlus, Minus, Plus } from 'lucide-react';
 import { api } from '../services/api';
+import { resolveImageUrl } from '../utils/imageUrl';
 import { useAppContext } from '../context/AppContext';
 
 const ProductDetails = () => {
@@ -73,7 +74,7 @@ const ProductDetails = () => {
             animate={{ opacity: 1 }}
             className="aspect-[4/3] bg-slate-100 dark:bg-slate-800 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-700"
           >
-            <img src={mainImage} alt={product.name} className="w-full h-full object-cover" />
+            <img src={resolveImageUrl(mainImage)} alt={product.name} className="w-full h-full object-cover" />
           </motion.div>
           {product.images.length > 1 && (
             <div className="grid grid-cols-4 gap-4">
@@ -83,7 +84,7 @@ const ProductDetails = () => {
                   onClick={() => setMainImage(img)}
                   className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${mainImage === img ? 'border-indigo-600 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`}
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <img src={resolveImageUrl(img)} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>

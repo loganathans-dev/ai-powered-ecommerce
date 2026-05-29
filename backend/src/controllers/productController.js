@@ -1,6 +1,7 @@
 const Product = require('../models/Product');
 const { formatProduct } = require('../utils/formatters');
 const { getNextProductId } = require('../utils/productId');
+const { sanitizeImageUrls } = require('../utils/sanitizeImages');
 
 const findProductByParamId = async (id) => {
   if (/^\d+$/.test(String(id))) {
@@ -34,7 +35,9 @@ const getProduct = async (req, res) => {
 
 const createProduct = async (req, res) => {
   const productId = req.body.id || (await getNextProductId());
-  const product = await Product.create({ ...req.body, productId: Number(productId) });
+  const body = { ...req.body, productId: Number(productId) };
+  if (body.images) body.images = sanitizeImageUrls(body.images);
+  const product = await Product.create(body);
   res.status(201).json(formatProduct(product));
 };
 
@@ -46,6 +49,7 @@ const updateProduct = async (req, res) => {
   }
 
   const { id, productId, _id, ...updates } = req.body;
+  if (updates.images) updates.images = sanitizeImageUrls(updates.images);
   Object.assign(product, updates);
   await product.save();
 
