@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import { resolveImageUrl } from '../utils/imageUrl';
 import { Heart, ShoppingBag, Trash2, ShoppingCart, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -47,7 +46,7 @@ export default function Wishlist() {
                 <div className="relative aspect-[4/3] overflow-hidden bg-slate-100 dark:bg-slate-900">
                   <Link to={`/product/${product.id}`}>
                     <img 
-                      src={resolveImageUrl(product.images[0])} 
+                      src={product.images[0]} 
                       alt={product.name} 
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />

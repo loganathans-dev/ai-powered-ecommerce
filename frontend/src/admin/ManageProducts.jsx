@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2, X, Check } from 'lucide-react';
 import { api } from '../services/api';
-import { resolveImageUrl } from '../utils/imageUrl';
 import { toast } from 'react-toastify';
+import { fileToStoredImageDataUrl, isPersistableImageUrl } from '../utils/productImage';
+import ProductImage from '../components/ProductImage';
+
+const DEFAULT_IMAGE =
+  'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop';
 
 const ManageProducts = () => {
   const [products, setProducts] = useState([]);
@@ -24,6 +28,7 @@ const ManageProducts = () => {
   const [isAddingNewBrand, setIsAddingNewBrand] = useState(false);
   const [customBrands, setCustomBrands] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [imagePreview, setImagePreview] = useState('');
 
   const filteredProducts = products.filter(p => 
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -54,21 +59,53 @@ const ManageProducts = () => {
     setIsAddingNewBrand(false);
     if (product) {
       setEditingProduct(product);
+      const existingImage = product.images?.[0] || '';
       setFormData({
         name: product.name,
         brand: product.brand,
         category: product.category,
         price: product.price,
         stock: product.stock || 0,
-        imageUrl: product.images[0],
+        imageUrl: isPersistableImageUrl(existingImage) ? existingImage : '',
         imageFile: null,
         sizes: product.sizes || []
       });
+      setImagePreview(isPersistableImageUrl(existingImage) ? existingImage : '');
     } else {
       setEditingProduct(null);
       setFormData({ name: '', brand: '', category: 'mens', price: '', stock: '', imageUrl: '', imageFile: null, sizes: [] });
+      setImagePreview('');
     }
     setIsModalOpen(true);
+  };
+
+  const handleImageFileChange = (e) => {
+    const file = e.target.files?.[0] || null;
+    setFormData((prev) => ({ ...prev, imageFile: file, imageUrl: '' }));
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+    } else {
+      setImagePreview(formData.imageUrl || '');
+    }
+  };
+
+  const resolvePrimaryImage = async () => {
+    if (formData.imageFile) {
+      return fileToStoredImageDataUrl(formData.imageFile);
+    }
+
+    const url = formData.imageUrl?.trim();
+    if (url && isPersistableImageUrl(url)) {
+      return url;
+    }
+
+    const existing = editingProduct?.images?.[0];
+    if (existing && isPersistableImageUrl(existing)) {
+      return existing;
+    }
+
+    return null;
   };
 
   const handleSave = async (e) => {
@@ -76,17 +113,7 @@ const ManageProducts = () => {
     setSaving(true);
 
     try {
-      let imageUrl = formData.imageUrl;
-
-      if (formData.imageFile) {
-        const { url } = await api.uploadImage(formData.imageFile);
-        imageUrl = url;
-      }
-
-      if (imageUrl?.startsWith('blob:')) {
-        toast.error('Invalid image. Please upload the file again.');
-        return;
-      }
+      const primaryImage = (await resolvePrimaryImage()) || DEFAULT_IMAGE;
 
       const payload = {
         name: formData.name,
@@ -95,20 +122,23 @@ const ManageProducts = () => {
         price: Number(formData.price),
         stock: Number(formData.stock),
         sizes: formData.sizes.length > 0 ? formData.sizes : [8, 9, 10],
-        images: [imageUrl || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800'],
+        images: [primaryImage],
         colors: ['#000000', '#ffffff'],
-        description: 'New product description.',
-        featured: false,
-        offer: 0
+        description: editingProduct?.description || 'New product description.',
+        featured: editingProduct?.featured ?? false,
+        offer: editingProduct?.offer ?? 0
       };
 
       if (editingProduct) {
+        const extraImages = (editingProduct.images || [])
+          .slice(1)
+          .filter(isPersistableImageUrl);
         const updated = await api.updateProduct(editingProduct.id, {
           ...payload,
-          images: [imageUrl || editingProduct.images[0], ...(editingProduct.images.slice(1))],
+          images: [primaryImage, ...extraImages]
         });
         setProducts(products.map(p => p.id === editingProduct.id ? updated : p));
-        toast.success('Product updated');
+        toast.success('Product updated — image saved to database');
       } else {
         const created = await api.createProduct(payload);
         const normalized = {
@@ -118,11 +148,11 @@ const ManageProducts = () => {
           category: created.category,
           price: created.price,
           stock: created.stock ?? 0,
-          images: created.images?.length ? created.images : [payload.images[0]],
+          images: created.images?.length ? created.images : [primaryImage],
           sizes: created.sizes ?? [],
         };
         setProducts([normalized, ...products]);
-        toast.success('Product created');
+        toast.success('Product created — image saved to database');
       }
       setIsModalOpen(false);
     } catch (err) {
@@ -181,7 +211,7 @@ const ManageProducts = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900 flex-shrink-0">
-                        <img src={resolveImageUrl(product.images[0])} alt={product.name} className="w-full h-full object-cover" />
+                        <ProductImage src={product.images?.[0]} alt={product.name} className="w-full h-full object-cover" />
                       </div>
                       <div>
                         <p className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">{product.name}</p>
@@ -319,9 +349,39 @@ const ManageProducts = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Upload Image</label>
-                <input type="file" accept="image/*" onChange={e => setFormData({...formData, imageFile: e.target.files[0]})} className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-slate-900 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-400" />
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Upload Image (saved to MongoDB Atlas)
+                </label>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  onChange={handleImageFileChange}
+                  className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-slate-900 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-400"
+                />
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  Local files are compressed and stored in Atlas. They work after deploy.
+                </p>
               </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Or image URL (https://...)
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://example.com/shoe.jpg"
+                  value={formData.imageUrl}
+                  onChange={(e) => {
+                    setFormData({ ...formData, imageUrl: e.target.value, imageFile: null });
+                    setImagePreview(e.target.value);
+                  }}
+                  className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-slate-900 dark:text-white"
+                />
+              </div>
+              {imagePreview && (
+                <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 w-24 h-24 bg-slate-100 dark:bg-slate-900">
+                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Available Sizes</label>
                 <div className="flex flex-wrap gap-3">

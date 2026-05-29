@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Trash2, Minus, Plus, ArrowRight } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
-import { resolveImageUrl } from '../utils/imageUrl';
 
 const Cart = () => {
   const { cart, removeFromCart, updateCartQuantity, cartTotal, user } = useAppContext();
@@ -44,7 +43,7 @@ const Cart = () => {
               >
                 {/* Image */}
                 <Link to={`/product/${item.id}`} className="w-full sm:w-32 aspect-square rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 flex-shrink-0">
-                  <img src={resolveImageUrl(item.images[0])} alt={item.name} className="w-full h-full object-cover" />
+                  <img src={item.images[0]} alt={item.name} className="w-full h-full object-cover" />
                 </Link>
 
                 {/* Details */}

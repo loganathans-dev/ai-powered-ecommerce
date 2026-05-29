@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { IndianRupee, ShoppingBag, Users, ChevronDown, Package, AlertTriangle } from 'lucide-react';
 import { api } from '../services/api';
-import { resolveImageUrl } from '../utils/imageUrl';
 
 const AdminDashboard = () => {
   const [timeFilter, setTimeFilter] = useState('30days');
@@ -148,7 +147,7 @@ const AdminDashboard = () => {
                   <div key={p.id} className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700 last:border-0 last:pb-0">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded overflow-hidden bg-slate-100">
-                        <img src={resolveImageUrl(p.images[0])} alt={p.name} className="w-full h-full object-cover" />
+                        <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover" />
                       </div>
                       <div>
                         <p className="font-bold text-sm text-slate-900 dark:text-white line-clamp-1">{p.name}</p>

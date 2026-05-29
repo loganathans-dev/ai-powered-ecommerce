@@ -2,8 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Star, Heart, HeartPlus } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
-import { resolveImageUrl } from '../utils/imageUrl';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import ProductImage from './ProductImage';
 
 const ProductCard = ({ product, index = 0 }) => {
   const { addToCart, user, toggleWishlist, isInWishlist } = useAppContext();
@@ -32,9 +32,9 @@ const ProductCard = ({ product, index = 0 }) => {
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-slate-100 dark:bg-slate-900">
         <Link to={`/product/${product.id}`}>
-          <img 
-            src={resolveImageUrl(product.images[0])} 
-            alt={product.name} 
+          <ProductImage
+            src={product.images?.[0]}
+            alt={product.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </Link>

@@ -1,16 +1,11 @@
-import { fileToBase64 } from '../utils/fileToBase64.js';
-
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 const request = async (path, options = {}) => {
-  const isFormData = options.body instanceof FormData;
   const res = await fetch(`${API_BASE}${path}`, {
-    headers: isFormData
-      ? { ...options.headers }
-      : {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
     ...options,
   });
 
@@ -57,18 +52,6 @@ export const api = {
     request(`/products/${id}`, {
       method: 'DELETE',
     }),
-
-  uploadImage: (file) =>
-    fileToBase64(file).then((data) =>
-      request('/upload/image', {
-        method: 'POST',
-        body: JSON.stringify({
-          data,
-          mimeType: file.type,
-          filename: file.name,
-        }),
-      })
-    ),
 
   getOrders: () => request('/orders'),
 
